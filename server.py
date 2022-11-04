@@ -10,17 +10,21 @@ PORT = 6969
 IP_ADDR = socket.gethostbyname(socket.gethostname())
 SOCK_ADDR = (IP_ADDR, PORT)
 
+def recv(socket):
+        msg_len = socket.recv(HEADER_LEN).decode(MSG_FORMAT)
+        if msg_len:
+            msg_len = int(msg_len)
+            msg = socket.recv(msg_len).decode(MSG_FORMAT)
+        return msg
+
 def client_handle(client_socket, addr):
     print(f"New connection from {addr}")
     while True:
-        msg_len = client_socket.recv(HEADER_LEN).decode(MSG_FORMAT)
-        if msg_len:
-            msg_len = int(msg_len)
-            msg = client_socket.recv(msg_len).decode(MSG_FORMAT)
-            if msg == DISCONN_MSG:
-                print(f"Connection closed to {addr}")
-                break
-            print(f"[{addr}] {msg}")
+        msg = recv(client_socket)
+        if msg == DISCONN_MSG:
+            print(f"Connection closed to {addr}")
+            break
+        print(f"[{addr}] {msg}")
     client_socket.close()
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

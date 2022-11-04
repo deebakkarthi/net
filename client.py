@@ -9,12 +9,12 @@ SERVER_PORT = 6969
 SERVER_IP_ADDR = socket.gethostbyname(socket.gethostname())
 SERVER_SOCK_ADDR = (SERVER_IP_ADDR, SERVER_PORT)
 
-def send(msg):
+def send(msg, socket):
     msg = msg.encode(MSG_FORMAT)
     msg_len = len(msg)
     msg_len = str(msg_len).ljust(64," ").encode(MSG_FORMAT)
-    client_socket.send(msg_len)
-    client_socket.send(msg)
+    socket.send(msg_len)
+    socket.send(msg)
 
 
 
@@ -22,7 +22,7 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect(SERVER_SOCK_ADDR)
 while True:
     inp = input()
-    send(inp)
+    send(inp, client_socket)
     if inp == DISCONN_MSG:
         break
 client_socket.close()
